@@ -6,8 +6,8 @@
 #
 #  FILE:        generate_components.py
 #
-#  DESCRIPTION: Side-panel chart component generator that reads cleaned CSVs and
-#               produces a self-contained HTML panel embeddable via iframe or JS
+#  DESCRIPTION: Side panel chart component generator that reads cleaned CSVs and
+#               produces a self contained HTML panel embeddable via iframe or JS
 #               injection. Uses a template file with placeholder token replacement.
 #
 #*****************************************************************
@@ -123,7 +123,7 @@ class ComponentGenerator:
 #
 #  Function name: normalizeNoncommercial
 #
-#  DESCRIPTION:   Converts raw non-commercial CSV rows to the same normalized schema
+#  DESCRIPTION:   Converts raw non commercial CSV rows to the same normalized schema
 #                 as commercial with proper type casting. Includes the island field
 #                 which commercial data does not have.
 #
@@ -180,11 +180,11 @@ class ComponentGenerator:
             logger.warning("No cleaned commercial CSV found")
 
         if noncomm_file:
-            logger.info(f"Loading non-commercial data from {noncomm_file}")
+            logger.info(f"Loading non commercial data from {noncomm_file}")
             noncommercial = self.normalizeNoncommercial(self.loadCsv(noncomm_file))
-            logger.info(f"  -> {len(noncommercial)} non-commercial rows")
+            logger.info(f"  -> {len(noncommercial)} non commercial rows")
         else:
-            logger.warning("No cleaned non-commercial CSV found")
+            logger.warning("No cleaned non commercial CSV found")
 
         if not commercial and not noncommercial:
             logger.error("No data - component not generated")
@@ -210,11 +210,9 @@ class ComponentGenerator:
             f.write(html)
 
         logger.info(f"Component generated -> {output_path}")
-        print(f"\n{'='*60}")
         print(f"  CHART COMPONENT GENERATED")
         print(f"  -> {output_path}")
         print(f"  Embed via <iframe> or open in browser.")
-        print(f"{'='*60}\n")
         return output_path
 
 
@@ -227,7 +225,7 @@ class ComponentGenerator:
 #                 contained HTML string ready to be written to disk.
 #
 #  Parameters:    comm_json (str) : JSON string of commercial data
-#                 noncomm_json (str) : JSON string of non-commercial data
+#                 noncomm_json (str) : JSON string of non commercial data
 #                 year_min (int) : earliest year for slider
 #                 year_max (int) : latest year for slider
 #
@@ -274,5 +272,5 @@ if __name__ == '__main__':
     if not result:
         print("ERROR: No data found. Run the cleaning pipeline first.")
         print("  Expected files in data/cleaned/:")
-        print("    cleaned_commercial_*.csv")
-        print("    cleaned_noncommercial_*.csv")
+        print("  cleaned_commercial_*.csv")
+        print("  cleaned_noncommercial_*.csv")

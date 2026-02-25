@@ -31,9 +31,9 @@ class CommercialDataCleaner:
 #                 auditing cleaning impacts.
 #
 #  Parameters:    input_dir (str) : path to directory containing the pre-tidied
-#                     commercial CSV file (default: 'data/raw')
+#                     commercial CSV file
 #                 output_dir (str) : path to directory where the cleaned CSV
-#                     will be saved (default: 'data/cleaned')
+#                     will be saved 
 #
 #  Return values: None (constructor)
 #
@@ -53,7 +53,7 @@ class CommercialDataCleaner:
 #  Function name: loadData
 #
 #  DESCRIPTION:   Locates a commercial fisheries CSV in the input directory
-#                 using expected filename patterns and avoids non-commercial files.
+#                 using expected filename patterns and avoids non commercial files.
 #                 Loads the first match into a DataFrame and records the raw row
 #                 count for later comparison.
 #
@@ -65,7 +65,7 @@ class CommercialDataCleaner:
 #*****************************************************************
 
     def loadData(self):
-        logging.info('Loading commercial fisheries data...')
+        logging.info('Loading commercial fisheries data ')
 
         try:
             comm_files = list(self.input_dir.glob('*tidied_comm_ev*.csv'))
@@ -107,12 +107,9 @@ class CommercialDataCleaner:
 #*****************************************************************
 
     def validateSchema(self):
-        logging.info('Validating data schema...')
+        logging.info('Validating data schema ')
 
-        required_columns = [
-            'year', 'area_id', 'county',
-            'species_group', 'ecosystem_type', 'exchange_value'
-        ]
+        required_columns = ['year', 'area_id', 'county','species_group', 'ecosystem_type', 'exchange_value']
 
         optional_columns = ['county_olelo', 'exchange_value_formatted']
 
@@ -141,12 +138,12 @@ class CommercialDataCleaner:
 #
 #  Parameters:    None
 #
-#  Return values: None (modifies self.data in place)
+#  Return values: None
 #
 #*****************************************************************
 
     def validateDataTypes(self):
-        logging.info('Validating data types...')
+        logging.info('Validating data types ')
 
         self.data['year'] = pd.to_numeric(self.data['year'], errors='coerce').astype('Int64')
         self.data['area_id'] = pd.to_numeric(self.data['area_id'], errors='coerce').astype('Int64')
@@ -171,12 +168,12 @@ class CommercialDataCleaner:
 #
 #  Parameters:    None
 #
-#  Return values: True : always returns True (warnings only)
+#  Return values: True : always returns True 
 #
 #*****************************************************************
 
     def validateDataRanges(self):
-        logging.info('Validating data ranges...')
+        logging.info('Validating data ranges ')
 
         issues = []
 
@@ -214,11 +211,9 @@ class CommercialDataCleaner:
 #*****************************************************************
 
     def validateEcosystemTypes(self):
-        logging.info('Validating ecosystem types...')
+        logging.info('Validating ecosystem types ')
 
-        expected_ecosystems = [
-            'Inshore — Reef', 'Coastal — Open Ocean', 'All Ecosystems'
-        ]
+        expected_ecosystems = ['Inshore — Reef', 'Coastal — Open Ocean', 'All Ecosystems']
 
         unique_ecosystems = self.data['ecosystem_type'].unique()
         unexpected = [e for e in unique_ecosystems if e not in expected_ecosystems]
@@ -244,12 +239,9 @@ class CommercialDataCleaner:
 #*****************************************************************
 
     def validateSpeciesGroups(self):
-        logging.info('Validating species groups...')
+        logging.info('Validating species groups ')
 
-        expected_species = [
-            'Deep 7 Bottomfish', 'Shallow Bottomfish',
-            'Pelagics', 'Reef-Associated', 'All Species'
-        ]
+        expected_species = ['Deep 7 Bottomfish', 'Shallow Bottomfish','Pelagics', 'Reef-Associated', 'All Species']
 
         unique_species = self.data['species_group'].unique()
         unexpected = [s for s in unique_species if s not in expected_species]
@@ -275,7 +267,7 @@ class CommercialDataCleaner:
 #*****************************************************************
 
     def validateCounties(self):
-        logging.info('Validating county names...')
+        logging.info('Validating county names ')
 
         expected_counties = ['Hawaii', 'Maui', 'Honolulu', 'Kauai', 'Kalawao']
 
@@ -303,7 +295,7 @@ class CommercialDataCleaner:
 #*****************************************************************
 
     def removeNullValues(self):
-        logging.info('Removing null/NA exchange values...')
+        logging.info('Removing null/NA exchange values ')
 
         before_count = len(self.data)
         self.data = self.data[self.data['exchange_value'].notna()].copy()
@@ -332,10 +324,10 @@ class CommercialDataCleaner:
 
     def removeAggregateRows(self, remove_aggregates=True):
         if not remove_aggregates:
-            logging.info('Skipping aggregate row removal (remove_aggregates=False)')
+            logging.info('Skipping aggregate row removal')
             return
 
-        logging.info('Removing aggregate rows...')
+        logging.info('Removing aggregate rows ')
 
         before_count = len(self.data)
 
@@ -372,10 +364,10 @@ class CommercialDataCleaner:
 
     def removeDisplayColumns(self, remove_display=False):
         if not remove_display:
-            logging.info('Keeping display columns (remove_display=False)')
+            logging.info('Keeping display columns')
             return
 
-        logging.info('Removing display-only columns...')
+        logging.info('Removing display-only columns ')
 
         display_columns = ['county_olelo', 'exchange_value_formatted']
         columns_to_drop = [col for col in display_columns if col in self.data.columns]
@@ -402,7 +394,7 @@ class CommercialDataCleaner:
 #*****************************************************************
 
     def generateSummaryStatistics(self):
-        logging.info('Generating summary statistics...')
+        logging.info('Generating summary statistics ')
 
         summary = {
             'data_type': 'commercial',
@@ -410,10 +402,7 @@ class CommercialDataCleaner:
             'raw_row_count': self.raw_row_count,
             'cleaned_row_count': len(self.data),
             'rows_removed': self.raw_row_count - len(self.data),
-            'date_range': {
-                'min_year': int(self.data['year'].min()),
-                'max_year': int(self.data['year'].max())
-            },
+            'date_range': {'min_year': int(self.data['year'].min()),'max_year': int(self.data['year'].max())},
             'total_exchange_value': float(self.data['exchange_value'].sum()),
             'unique_counties': sorted(self.data['county'].unique().tolist()),
             'unique_species_groups': sorted(self.data['species_group'].unique().tolist()),
@@ -441,7 +430,7 @@ class CommercialDataCleaner:
 #*****************************************************************
 
     def exportCleanedData(self):
-        logging.info('Exporting cleaned commercial data...')
+        logging.info('Exporting cleaned commercial data ')
 
         timestamp = datetime.now().strftime('%Y%m%d')
         output_file = self.output_dir / f'cleaned_commercial_{timestamp}.csv'
@@ -469,9 +458,8 @@ class CommercialDataCleaner:
 #*****************************************************************
 
     def runCleaningPipeline(self, remove_aggregates=True, remove_display=False):
-        logging.info('=' * 60)
+
         logging.info('COMMERCIAL FISHERIES DATA CLEANING PIPELINE')
-        logging.info('=' * 60)
 
         if not self.loadData():
             return False, None, None
@@ -493,11 +481,9 @@ class CommercialDataCleaner:
         output_file = self.exportCleanedData()
         summary = self.generateSummaryStatistics()
 
-        logging.info('=' * 60)
         logging.info('COMMERCIAL DATA CLEANING COMPLETE')
         logging.info(f'Input:  {self.raw_row_count:,} rows')
         logging.info(f'Output: {self.cleaned_row_count:,} rows')
         logging.info(f'Removed: {self.raw_row_count - self.cleaned_row_count:,} rows')
-        logging.info('=' * 60)
 
         return True, output_file, summary

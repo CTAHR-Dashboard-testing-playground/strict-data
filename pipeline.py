@@ -7,7 +7,7 @@
 #  FILE:        pipeline.py
 #
 #  DESCRIPTION: Main orchestrator for the fisheries data cleaning pipeline.
-#               Coordinates cleaning of both commercial and non-commercial datasets
+#               Coordinates cleaning of both commercial and non commercial datasets
 #               then generates combined summaries and triggers dashboard generation.
 #
 #*****************************************************************
@@ -16,10 +16,8 @@ import json
 import logging
 from pathlib import Path
 from datetime import datetime
-
 from clean_commercial import CommercialDataCleaner
 from clean_noncommercial import NonCommercialDataCleaner
-
 
 class FisheriesCleaningPipeline:
 
@@ -29,10 +27,10 @@ class FisheriesCleaningPipeline:
 #
 #  DESCRIPTION:   Initializes the pipeline by setting up directories and instantiating
 #                 both the CommercialDataCleaner and NonCommercialDataCleaner. Also
-#                 creates a results dictionary that stores each sub-pipeline outcome.
+#                 creates a results dictionary that stores each sub pipeline outcome.
 #
-#  Parameters:    input_dir (str) : path to raw CSV directory (default: 'data/raw')
-#                 output_dir (str) : path to cleaned output directory (default: 'data/cleaned')
+#  Parameters:    input_dir (str) : path to raw CSV directory 
+#                 output_dir (str) : path to cleaned output directory
 #
 #  Return values: None (constructor)
 #
@@ -50,7 +48,6 @@ class FisheriesCleaningPipeline:
             'commercial': None,
             'non_commercial': None
         }
-
 
 #*****************************************************************
 #
@@ -89,12 +86,12 @@ class FisheriesCleaningPipeline:
 #
 #  Function name: runCommercialCleaning
 #
-#  DESCRIPTION:   Executes the commercial data cleaning sub-pipeline and stores
+#  DESCRIPTION:   Executes the commercial data cleaning sub pipeline and stores
 #                 the results including success status, output path, and summary
 #                 statistics for use in the final report.
 #
-#  Parameters:    remove_aggregates (bool) : remove rollup rows (default: True)
-#                 remove_display (bool) : drop display columns (default: False)
+#  Parameters:    remove_aggregates (bool) : remove rollup rows 
+#                 remove_display (bool) : drop display columns 
 #
 #  Return values: True  : cleaning succeeded
 #                 False : cleaning failed
@@ -102,9 +99,7 @@ class FisheriesCleaningPipeline:
 #*****************************************************************
 
     def runCommercialCleaning(self, remove_aggregates=True, remove_display=False):
-        logging.info('')
         logging.info('STARTING COMMERCIAL DATA CLEANING')
-        logging.info('')
 
         success, output_file, summary = self.commercial_cleaner.runCleaningPipeline(
             remove_aggregates=remove_aggregates,
@@ -125,17 +120,16 @@ class FisheriesCleaningPipeline:
             }
             return False
 
-
 #*****************************************************************
 #
 #  Function name: runNoncommercialCleaning
 #
-#  DESCRIPTION:   Executes the non-commercial data cleaning sub-pipeline and stores
+#  DESCRIPTION:   Executes the non commercial data cleaning sub pipeline and stores
 #                 the results including success status, output path, and summary
 #                 statistics for use in the final report.
 #
-#  Parameters:    remove_aggregates (bool) : remove rollup rows (default: True)
-#                 remove_display (bool) : drop display columns (default: False)
+#  Parameters:    remove_aggregates (bool) : remove rollup rows 
+#                 remove_display (bool) : drop display columns 
 #
 #  Return values: True  : cleaning succeeded
 #                 False : cleaning failed
@@ -143,9 +137,7 @@ class FisheriesCleaningPipeline:
 #*****************************************************************
 
     def runNoncommercialCleaning(self, remove_aggregates=True, remove_display=False):
-        logging.info('')
-        logging.info('STARTING NON-COMMERCIAL DATA CLEANING')
-        logging.info('')
+        logging.info('STARTING NON COMMERCIAL DATA CLEANING')
 
         success, output_file, summary = self.noncommercial_cleaner.runCleaningPipeline(
             remove_aggregates=remove_aggregates,
@@ -162,7 +154,7 @@ class FisheriesCleaningPipeline:
         else:
             self.results['non_commercial'] = {
                 'success': False,
-                'error': 'Non-commercial data cleaning failed'
+                'error': 'Non commercial data cleaning failed'
             }
             return False
 
@@ -214,7 +206,6 @@ class FisheriesCleaningPipeline:
 
         return combined_summary
 
-
 #*****************************************************************
 #
 #  Function name: exportSummaryJson
@@ -241,12 +232,11 @@ class FisheriesCleaningPipeline:
         logging.info(f'Summary exported to {output_file}')
         return output_file
 
-
 #*****************************************************************
 #
 #  Function name: generatePipelineReport
 #
-#  DESCRIPTION:   Prints a human-readable summary of the pipeline results to both
+#  DESCRIPTION:   Prints a human readable summary of the pipeline results to both
 #                 console and log file. Shows row counts, date ranges, total values,
 #                 and unique dimension counts for each dataset.
 #
@@ -258,9 +248,7 @@ class FisheriesCleaningPipeline:
 
     def generatePipelineReport(self):
         logging.info('')
-        logging.info('=' * 70)
-        logging.info('FISHERIES DATA CLEANING PIPELINE - FINAL REPORT')
-        logging.info('=' * 70)
+        logging.info('FISHERIES DATA CLEANING PIPELINE : FINAL REPORT')
 
         if self.results['commercial'] and self.results['commercial']['success']:
             comm_summary = self.results['commercial']['summary']
@@ -282,7 +270,7 @@ class FisheriesCleaningPipeline:
         if self.results['non_commercial'] and self.results['non_commercial']['success']:
             noncomm_summary = self.results['non_commercial']['summary']
             logging.info('')
-            logging.info('NON-COMMERCIAL FISHERIES:')
+            logging.info('NON COMMERCIAL FISHERIES:')
             logging.info(f"  Status: SUCCESS")
             logging.info(f"  Input Rows:  {noncomm_summary['raw_row_count']:,}")
             logging.info(f"  Output Rows: {noncomm_summary['cleaned_row_count']:,}")
@@ -292,22 +280,21 @@ class FisheriesCleaningPipeline:
             logging.info(f"  Islands:     {len(noncomm_summary['unique_islands'])}")
         else:
             logging.info('')
-            logging.info('NON-COMMERCIAL FISHERIES: FAILED')
+            logging.info('NON COMMERCIAL FISHERIES: FAILED')
 
         logging.info('')
-        logging.info('=' * 70)
 
 
 #*****************************************************************
 #
 #  Function name: runFullPipeline
 #
-#  DESCRIPTION:   Executes the complete end-to-end pipeline by setting up logging,
+#  DESCRIPTION:   Executes the complete end to end pipeline by setting up logging,
 #                 running both cleaners independently, and printing the final report.
-#                 Both sub-pipelines run so one failure does not block the other.
+#                 Both sub pipelines run so one failure does not block the other.
 #
-#  Parameters:    remove_aggregates (bool) : remove rollup rows (default: True)
-#                 remove_display (bool) : drop display columns (default: False)
+#  Parameters:    remove_aggregates (bool) : remove rollup rows 
+#                 remove_display (bool) : drop display columns 
 #
 #  Return values: True  : both datasets cleaned successfully
 #                 False : one or both failed
@@ -317,14 +304,11 @@ class FisheriesCleaningPipeline:
     def runFullPipeline(self, remove_aggregates=True, remove_display=False):
         self.setupLogging()
 
-        logging.info('=' * 70)
         logging.info('FISHERIES DATA CLEANING PIPELINE - START')
-        logging.info('=' * 70)
         logging.info(f'Input Directory:  {self.input_dir.absolute()}')
         logging.info(f'Output Directory: {self.output_dir.absolute()}')
         logging.info(f'Remove Aggregates: {remove_aggregates}')
         logging.info(f'Remove Display Columns: {remove_display}')
-        logging.info('=' * 70)
 
         comm_success = self.runCommercialCleaning(
             remove_aggregates=remove_aggregates,
@@ -341,9 +325,9 @@ class FisheriesCleaningPipeline:
         overall_success = comm_success and noncomm_success
 
         if overall_success:
-            logging.info('PIPELINE STATUS: SUCCESS')
+            logging.info('Pipeline Status: SUCCESS')
         else:
-            logging.info('PIPELINE STATUS: PARTIAL SUCCESS OR FAILURE')
+            logging.info('Pipeline Status: PARTIAL SUCCESS OR FAILURE')
 
         return overall_success
 
@@ -375,9 +359,8 @@ def main():
     )
 
     if success:
-        print("\n✓ Data cleaning completed successfully!")
-        print(f"  Cleaned files saved to: data/cleaned/")
-        print(f"  Summary JSON saved to: data/cleaned/")
+        print(" Data cleaning completed successfully*")
+        print(f" Cleaned files saved to: data/cleaned/")
     else:
         print("\n✗ Data cleaning encountered errors. Check logs for details.")
 
@@ -388,4 +371,6 @@ if __name__ == '__main__':
     main()
 
 from generate_dashboard import DashboardGenerator
+
+
 DashboardGenerator(data_dir='data/cleaned', output_dir='data/cleaned').generate()

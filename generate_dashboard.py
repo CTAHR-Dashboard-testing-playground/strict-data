@@ -6,7 +6,7 @@
 #
 #  FILE:        generate_dashboard.py
 #
-#  DESCRIPTION: Full-page dashboard generator that reads cleaned CSVs and produces
+#  DESCRIPTION: Full page dashboard generator that reads cleaned CSVs and produces
 #               a self-contained Chart.js HTML file with all data embedded as JSON.
 #               The generated file works offline with no server required.
 #
@@ -125,7 +125,7 @@ class DashboardGenerator:
 #
 #  Function name: normalizeNoncommercial
 #
-#  DESCRIPTION:   Converts raw non-commercial CSV rows to the same normalized schema
+#  DESCRIPTION:   Converts raw non commercial CSV rows to the same normalized schema
 #                 as commercial with proper type casting. Includes the island field
 #                 which commercial data does not have.
 #
@@ -162,7 +162,7 @@ class DashboardGenerator:
 #                 Returns a dictionary that gets injected into the template.
 #
 #  Parameters:    commercial (list) : normalized commercial rows
-#                 noncommercial (list) : normalized non-commercial rows
+#                 noncommercial (list) : normalized non commercial rows
 #
 #  Return values: dict : summary statistics for display
 #
@@ -230,17 +230,17 @@ class DashboardGenerator:
             logger.info(f"Loading commercial data from {comm_file}")
             raw_comm = self.loadCsv(comm_file)
             commercial = self.normalizeCommercial(raw_comm)
-            logger.info(f"  → {len(commercial)} commercial rows loaded")
+            logger.info(f"  {len(commercial)} commercial rows loaded")
         else:
             logger.warning("No cleaned commercial CSV found — skipping")
 
         if noncomm_file:
-            logger.info(f"Loading non-commercial data from {noncomm_file}")
+            logger.info(f"Loading non commercial data from {noncomm_file}")
             raw_noncomm = self.loadCsv(noncomm_file)
             noncommercial = self.normalizeNoncommercial(raw_noncomm)
-            logger.info(f"  → {len(noncommercial)} non-commercial rows loaded")
+            logger.info(f"  {len(noncommercial)} non commercial rows loaded")
         else:
-            logger.warning("No cleaned non-commercial CSV found — skipping")
+            logger.warning("No cleaned non commercial CSV found — skipping")
 
         if not commercial and not noncommercial:
             logger.error("No data available — dashboard not generated")
@@ -259,11 +259,8 @@ class DashboardGenerator:
             f.write(html)
 
         logger.info(f"Dashboard generated → {output_path}")
-        print(f"\n{'='*60}")
-        print(f"  DASHBOARD GENERATED")
-        print(f"  → {output_path}")
-        print(f"  Open in any browser to explore your data interactively.")
-        print(f"{'='*60}\n")
+        print(f" Dashboard Generated")
+        print(f" File: {output_path}")
 
         return output_path
 
@@ -301,7 +298,7 @@ class DashboardGenerator:
 #                 function because it contains the entire dashboard template.
 #
 #  Parameters:    commercial (list) : normalized commercial data
-#                 noncommercial (list) : normalized non-commercial data
+#                 noncommercial (list) : normalized non commercial data
 #                 summary (dict) : precomputed summary stats
 #
 #  Return values: str : complete HTML document as a string
@@ -339,52 +336,60 @@ class DashboardGenerator:
     <style>
         :root {{--deep-ocean:#0B1D3A;--mid-ocean:#133B5C;--reef-teal:#1B998B;--lagoon:#2EC4B6;--sand:#F4E8C1;--coral:#FF6B6B;--sunset:#F77F00;--plumeria:#FFD166;--card-bg:rgba(255,255,255,0.92);--card-border:rgba(27,153,139,0.15);--shadow:0 4px 24px rgba(11,29,58,0.08);--shadow-hover:0 8px 40px rgba(11,29,58,0.14);--radius:16px;--radius-sm:10px;}}
         *{{margin:0;padding:0;box-sizing:border-box;}}
-        body{{font-family:'IBM Plex Sans',sans-serif;background:var(--deep-ocean);color:#1a1a2e;min-height:100vh;}}
-        .hero{{position:relative;background:linear-gradient(165deg,var(--deep-ocean) 0%,var(--mid-ocean) 40%,var(--reef-teal) 100%);padding:3rem 2rem 4rem;overflow:hidden;}}
-        .hero::before{{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 50% at 20% 80%,rgba(46,196,182,0.25) 0%,transparent 70%),radial-gradient(ellipse 60% 40% at 80% 20%,rgba(255,209,102,0.12) 0%,transparent 60%);pointer-events:none;}}
-        .hero-inner{{max-width:1360px;margin:0 auto;position:relative;z-index:1;}}
-        .hero-badge{{display:inline-block;background:rgba(255,255,255,0.12);backdrop-filter:blur(6px);color:var(--sand);font-size:0.68rem;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;padding:6px 16px;border-radius:20px;margin-bottom:0.8rem;border:1px solid rgba(255,255,255,0.1);}}
-        .hero h1{{font-family:'DM Serif Display',serif;font-size:clamp(1.8rem,5vw,3rem);color:#fff;line-height:1.15;margin-bottom:0.5rem;}}
-        .hero h1 span{{color:var(--lagoon);}}
-        .hero p{{color:rgba(255,255,255,0.7);font-size:1rem;max-width:600px;font-weight:300;}}
-        .hero-meta{{color:rgba(255,255,255,0.45);font-size:0.75rem;margin-top:0.6rem;}}
-        .wave-sep{{display:block;width:100%;margin-top:-2px;line-height:0;}}
-        .wave-sep svg{{width:100%;height:auto;display:block;}}
-        .main-bg{{background:linear-gradient(180deg,#EAF6F6 0%,#F7FAFA 40%,#F0F4F5 100%);padding:0 1.5rem 4rem;}}
+
+        /* UPDATED: BLACK BACKGROUND + remove header wave look */
+        body{{font-family:'IBM Plex Sans',sans-serif;background:#000;color:#fff;min-height:100vh;}}
+
+        /* Main wrapper no longer paints a light background */
+        .main-bg{{background:transparent;padding:2.5rem 1.5rem 4rem;}}
+
         .container{{max-width:1360px;margin:0 auto;}}
-        .stats-row{{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-top:-2.5rem;position:relative;z-index:2;margin-bottom:2rem;}}
+
+        /* Remove the negative lift that was designed for hero/wave */
+        .stats-row{{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-top:0;position:relative;z-index:2;margin-bottom:2rem;}}
+
+        /* Dark theme cards */
+        :root{{--card-bg:rgba(20,20,20,0.92);--card-border:rgba(255,255,255,0.08);--shadow:0 4px 24px rgba(0,0,0,0.35);--shadow-hover:0 8px 40px rgba(0,0,0,0.55);}}
+
         .stat-card{{background:var(--card-bg);backdrop-filter:blur(12px);border:1px solid var(--card-border);border-radius:var(--radius);padding:1.3rem 1.5rem;box-shadow:var(--shadow);transition:transform .25s,box-shadow .25s;}}
         .stat-card:hover{{transform:translateY(-3px);box-shadow:var(--shadow-hover);}}
-        .stat-label{{font-size:0.65rem;text-transform:uppercase;letter-spacing:1.8px;color:#6B7C8D;font-weight:600;margin-bottom:0.3rem;}}
-        .stat-value{{font-family:'DM Serif Display',serif;font-size:1.6rem;color:var(--deep-ocean);line-height:1.2;}}
-        .stat-sub{{font-size:0.75rem;color:var(--reef-teal);font-weight:500;margin-top:0.15rem;}}
+        .stat-label{{font-size:0.65rem;text-transform:uppercase;letter-spacing:1.8px;color:rgba(255,255,255,0.65);font-weight:600;margin-bottom:0.3rem;}}
+        .stat-value{{font-family:'DM Serif Display',serif;font-size:1.6rem;color:#fff;line-height:1.2;}}
+        .stat-sub{{font-size:0.75rem;color:var(--lagoon);font-weight:500;margin-top:0.15rem;}}
+
         .controls-panel{{background:var(--card-bg);border:1px solid var(--card-border);border-radius:var(--radius);padding:1.4rem 1.6rem;box-shadow:var(--shadow);margin-bottom:2rem;}}
-        .controls-title{{font-weight:600;font-size:0.92rem;color:var(--deep-ocean);margin-bottom:1rem;display:flex;align-items:center;gap:0.5rem;}}
+        .controls-title{{font-weight:600;font-size:0.92rem;color:#fff;margin-bottom:1rem;display:flex;align-items:center;gap:0.5rem;}}
         .controls-grid{{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:1rem;align-items:end;}}
-        .ctrl-group label{{display:block;font-size:0.68rem;text-transform:uppercase;letter-spacing:1.5px;color:#6B7C8D;font-weight:600;margin-bottom:0.35rem;}}
-        .ctrl-group select{{width:100%;padding:0.5rem 0.7rem;border:1.5px solid #D4DFE6;border-radius:var(--radius-sm);font-family:inherit;font-size:0.85rem;color:var(--deep-ocean);background:#fff;outline:none;transition:border-color .2s;}}
+        .ctrl-group label{{display:block;font-size:0.68rem;text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,0.6);font-weight:600;margin-bottom:0.35rem;}}
+        .ctrl-group select{{width:100%;padding:0.5rem 0.7rem;border:1.5px solid rgba(255,255,255,0.14);border-radius:var(--radius-sm);font-family:inherit;font-size:0.85rem;color:#fff;background:rgba(0,0,0,0.35);outline:none;transition:border-color .2s;}}
         .ctrl-group select:focus{{border-color:var(--reef-teal);}}
+
         .range-row{{display:flex;gap:0.5rem;align-items:center;}}
-        .range-labels{{display:flex;justify-content:space-between;font-size:0.7rem;color:#6B7C8D;margin-top:0.2rem;font-weight:500;}}
+        .range-labels{{display:flex;justify-content:space-between;font-size:0.7rem;color:rgba(255,255,255,0.6);margin-top:0.2rem;font-weight:500;}}
         input[type="range"]{{-webkit-appearance:none;width:100%;height:6px;border-radius:3px;background:linear-gradient(90deg,var(--reef-teal),var(--lagoon));border:none;padding:0;outline:none;}}
-        input[type="range"]::-webkit-slider-thumb{{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--reef-teal);border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,0.18);cursor:pointer;}}
+        input[type="range"]::-webkit-slider-thumb{{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--reef-teal);border:3px solid #000;box-shadow:0 2px 8px rgba(0,0,0,0.5);cursor:pointer;}}
+
         .toggle-row{{display:flex;gap:0.4rem;flex-wrap:wrap;}}
-        .toggle-btn{{padding:0.4rem 0.9rem;border-radius:20px;border:1.5px solid #D4DFE6;background:#fff;font-family:inherit;font-size:0.8rem;font-weight:500;color:#6B7C8D;cursor:pointer;transition:all .2s;}}
+        .toggle-btn{{padding:0.4rem 0.9rem;border-radius:20px;border:1.5px solid rgba(255,255,255,0.14);background:rgba(0,0,0,0.35);font-family:inherit;font-size:0.8rem;font-weight:500;color:rgba(255,255,255,0.75);cursor:pointer;transition:all .2s;}}
         .toggle-btn:hover{{border-color:var(--reef-teal);color:var(--reef-teal);}}
         .toggle-btn.active{{background:var(--reef-teal);border-color:var(--reef-teal);color:#fff;}}
+
         .charts-grid{{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:2rem;}}
         .chart-card{{background:var(--card-bg);border:1px solid var(--card-border);border-radius:var(--radius);padding:1.4rem;box-shadow:var(--shadow);transition:box-shadow .25s;}}
         .chart-card:hover{{box-shadow:var(--shadow-hover);}}
         .chart-card.full{{grid-column:1/-1;}}
         .chart-header{{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.8rem;}}
-        .chart-title{{font-weight:600;font-size:0.95rem;color:var(--deep-ocean);}}
-        .chart-subtitle{{font-size:0.72rem;color:#6B7C8D;margin-top:0.1rem;}}
+        .chart-title{{font-weight:600;font-size:0.95rem;color:#fff;}}
+        .chart-subtitle{{font-size:0.72rem;color:rgba(255,255,255,0.6);margin-top:0.1rem;}}
         .chart-wrap{{position:relative;height:320px;}}
         .chart-wrap.tall{{height:400px;}}
-        .footer{{background:var(--deep-ocean);color:rgba(255,255,255,0.45);text-align:center;padding:1.8rem 1rem;font-size:0.78rem;}}
+
+        .footer{{background:transparent;color:rgba(255,255,255,0.45);text-align:center;padding:1.8rem 1rem;font-size:0.78rem;}}
         .footer a{{color:var(--lagoon);text-decoration:none;}}
+
         @media(max-width:900px){{.charts-grid{{grid-template-columns:1fr;}}}}
-        @media(max-width:600px){{.hero{{padding:2rem 1rem 3rem;}}.stats-row{{grid-template-columns:1fr 1fr;}}.controls-grid{{grid-template-columns:1fr;}}}}
+        @media(max-width:600px){{.stats-row{{grid-template-columns:1fr 1fr;}}.controls-grid{{grid-template-columns:1fr;}}}}
+
         @keyframes fadeUp{{from{{opacity:0;transform:translateY(16px);}}to{{opacity:1;transform:translateY(0);}}}}
         .stat-card,.chart-card,.controls-panel{{animation:fadeUp 0.45s ease-out both;}}
         .stat-card:nth-child(2){{animation-delay:0.06s;}}.stat-card:nth-child(3){{animation-delay:0.12s;}}
@@ -392,7 +397,7 @@ class DashboardGenerator:
     </style>
 </head>
 <body>
-<div class="wave-sep"><svg viewBox="0 0 1440 80" preserveAspectRatio="none"><path d="M0,40 C360,80 720,0 1080,40 C1260,60 1380,50 1440,40 L1440,80 L0,80 Z" fill="#EAF6F6"/></svg></div>
+<!-- REMOVED: wave separator that created the curved header band -->
 <div class="main-bg"><div class="container">
     <div class="stats-row">
         <div class="stat-card"><div class="stat-label">Commercial EV</div><div class="stat-value">{comm_total_display}</div><div class="stat-sub">{comm_years_display}</div></div>
@@ -430,12 +435,12 @@ function sumByYearAndField(data,field){{const g={{}};data.forEach(d=>{{const k=d
 function filtered(){{let data=[];if(S.source!=='noncommercial')data=data.concat(DATA_COMMERCIAL);if(S.source!=='commercial')data=data.concat(DATA_NONCOMMERCIAL);return data.filter(d=>d.year>=S.yearMin&&d.year<=S.yearMax&&(S.region==='all'||d.county===S.region||d.island===S.region)&&(S.species==='all'||d.species_group===S.species)&&(S.ecosystem==='all'||d.ecosystem_type===S.ecosystem));}}
 function populateFilters(){{const all=[...DATA_COMMERCIAL,...DATA_NONCOMMERCIAL];const regions=new Set(),species=new Set(),ecos=new Set();all.forEach(d=>{{if(d.county)regions.add(d.county);if(d.island)regions.add(d.island);if(d.species_group)species.add(d.species_group);if(d.ecosystem_type)ecos.add(d.ecosystem_type);}});fillSelect('fRegion',regions,'All Regions');fillSelect('fSpecies',species,'All Species');fillSelect('fEco',ecos,'All Ecosystems');}}
 function fillSelect(id,vals,allLabel){{const el=document.getElementById(id);el.innerHTML='<option value="all">'+allLabel+'</option>';[...vals].sort().forEach(v=>{{el.innerHTML+='<option value="'+v+'">'+v+'</option>';}});}}
-Chart.defaults.font.family="'IBM Plex Sans',sans-serif";Chart.defaults.font.size=12;Chart.defaults.color='#6B7C8D';Chart.defaults.plugins.legend.labels.usePointStyle=true;Chart.defaults.plugins.tooltip.backgroundColor='rgba(11,29,58,0.92)';Chart.defaults.plugins.tooltip.cornerRadius=8;Chart.defaults.plugins.tooltip.padding=12;
+Chart.defaults.font.family="'IBM Plex Sans',sans-serif";Chart.defaults.font.size=12;Chart.defaults.color='rgba(255,255,255,0.7)';Chart.defaults.plugins.legend.labels.usePointStyle=true;Chart.defaults.plugins.tooltip.backgroundColor='rgba(0,0,0,0.9)';Chart.defaults.plugins.tooltip.cornerRadius=8;Chart.defaults.plugins.tooltip.padding=12;
 const ttM={{callbacks:{{label:ctx=>ctx.dataset.label+': '+fmtM(ctx.parsed.y)}}}};
 const ttMx={{callbacks:{{label:ctx=>ctx.dataset.label+': '+fmtM(ctx.parsed.x)}}}};
-function initCharts(){{C.time=new Chart(document.getElementById('cTime'),{{type:'line',data:{{labels:[],datasets:[]}},options:{{responsive:true,maintainAspectRatio:false,interaction:{{mode:'index',intersect:false}},plugins:{{tooltip:ttM}},scales:{{y:{{beginAtZero:true,title:{{display:true,text:'Exchange Value (Millions USD)'}},grid:{{color:'rgba(0,0,0,0.04)'}}}},x:{{grid:{{display:false}}}}}}}}}});C.species=new Chart(document.getElementById('cSpecies'),{{type:'doughnut',data:{{labels:[],datasets:[{{data:[],backgroundColor:PAL.species,borderWidth:2,borderColor:'#fff'}}]}},options:{{responsive:true,maintainAspectRatio:false,plugins:{{legend:{{position:'bottom'}},tooltip:{{callbacks:{{label:ctx=>ctx.label+': '+fmtM(ctx.parsed)}}}}}}}}}});C.eco=new Chart(document.getElementById('cEco'),{{type:'polarArea',data:{{labels:[],datasets:[{{data:[],backgroundColor:PAL.eco.map(c=>c+'99'),borderColor:PAL.eco,borderWidth:2}}]}},options:{{responsive:true,maintainAspectRatio:false,plugins:{{legend:{{position:'bottom'}},tooltip:{{callbacks:{{label:ctx=>ctx.label+': '+fmtM(ctx.parsed)}}}}}},scales:{{r:{{ticks:{{display:false}}}}}}}}}});C.county=new Chart(document.getElementById('cCounty'),{{type:'bar',data:{{labels:[],datasets:[{{data:[],backgroundColor:PAL.county,borderRadius:6,borderSkipped:false}}]}},options:{{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{{legend:{{display:false}},tooltip:ttMx}},scales:{{x:{{beginAtZero:true,title:{{display:true,text:'Millions USD'}},grid:{{color:'rgba(0,0,0,0.04)'}}}},y:{{grid:{{display:false}}}}}}}}}});C.island=new Chart(document.getElementById('cIsland'),{{type:'bar',data:{{labels:[],datasets:[{{data:[],backgroundColor:PAL.island,borderRadius:6,borderSkipped:false}}]}},options:{{responsive:true,maintainAspectRatio:false,plugins:{{legend:{{display:false}},tooltip:ttM}},scales:{{y:{{beginAtZero:true,title:{{display:true,text:'Millions USD'}},grid:{{color:'rgba(0,0,0,0.04)'}}}},x:{{grid:{{display:false}}}}}}}}}});C.stacked=new Chart(document.getElementById('cStacked'),{{type:'line',data:{{labels:[],datasets:[]}},options:{{responsive:true,maintainAspectRatio:false,interaction:{{mode:'index',intersect:false}},plugins:{{tooltip:ttM,legend:{{position:'bottom'}}}},scales:{{y:{{stacked:true,beginAtZero:true,title:{{display:true,text:'Exchange Value (Millions USD)'}},grid:{{color:'rgba(0,0,0,0.04)'}}}},x:{{grid:{{display:false}}}}}}}}}});}}
+function initCharts(){{C.time=new Chart(document.getElementById('cTime'),{{type:'line',data:{{labels:[],datasets:[]}},options:{{responsive:true,maintainAspectRatio:false,interaction:{{mode:'index',intersect:false}},plugins:{{tooltip:ttM}},scales:{{y:{{beginAtZero:true,title:{{display:true,text:'Exchange Value (Millions USD)'}},grid:{{color:'rgba(255,255,255,0.08)'}}}},x:{{grid:{{display:false}}}}}}}}}});C.species=new Chart(document.getElementById('cSpecies'),{{type:'doughnut',data:{{labels:[],datasets:[{{data:[],backgroundColor:PAL.species,borderWidth:2,borderColor:'#000'}}]}},options:{{responsive:true,maintainAspectRatio:false,plugins:{{legend:{{position:'bottom'}},tooltip:{{callbacks:{{label:ctx=>ctx.label+': '+fmtM(ctx.parsed)}}}}}}}}}});C.eco=new Chart(document.getElementById('cEco'),{{type:'polarArea',data:{{labels:[],datasets:[{{data:[],backgroundColor:PAL.eco.map(c=>c+'99'),borderColor:PAL.eco,borderWidth:2}}]}},options:{{responsive:true,maintainAspectRatio:false,plugins:{{legend:{{position:'bottom'}},tooltip:{{callbacks:{{label:ctx=>ctx.label+': '+fmtM(ctx.parsed)}}}}}},scales:{{r:{{ticks:{{display:false}}}}}}}}}});C.county=new Chart(document.getElementById('cCounty'),{{type:'bar',data:{{labels:[],datasets:[{{data:[],backgroundColor:PAL.county,borderRadius:6,borderSkipped:false}}]}},options:{{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{{legend:{{display:false}},tooltip:ttMx}},scales:{{x:{{beginAtZero:true,title:{{display:true,text:'Millions USD'}},grid:{{color:'rgba(255,255,255,0.08)'}}}},y:{{grid:{{display:false}}}}}}}}}});C.island=new Chart(document.getElementById('cIsland'),{{type:'bar',data:{{labels:[],datasets:[{{data:[],backgroundColor:PAL.island,borderRadius:6,borderSkipped:false}}]}},options:{{responsive:true,maintainAspectRatio:false,plugins:{{legend:{{display:false}},tooltip:ttM}},scales:{{y:{{beginAtZero:true,title:{{display:true,text:'Millions USD'}},grid:{{color:'rgba(255,255,255,0.08)'}}}},x:{{grid:{{display:false}}}}}}}}}});C.stacked=new Chart(document.getElementById('cStacked'),{{type:'line',data:{{labels:[],datasets:[]}},options:{{responsive:true,maintainAspectRatio:false,interaction:{{mode:'index',intersect:false}},plugins:{{tooltip:ttM,legend:{{position:'bottom'}}}},scales:{{y:{{stacked:true,beginAtZero:true,title:{{display:true,text:'Exchange Value (Millions USD)'}},grid:{{color:'rgba(255,255,255,0.08)'}}}},x:{{grid:{{display:false}}}}}}}}}});}}
 function updateAll(){{const f=filtered();const comm=f.filter(d=>d.type==='commercial');const noncomm=f.filter(d=>d.type==='noncommercial');const chartType=document.querySelector('#timeType .toggle-btn.active')?.dataset.v||'line';const cY=sumByYear(comm),nY=sumByYear(noncomm);const allY=[...new Set([...Object.keys(cY),...Object.keys(nY)])].sort();C.time.config.type=chartType;C.time.data.labels=allY;C.time.data.datasets=[];if(S.source!=='noncommercial'){{C.time.data.datasets.push({{label:'Commercial',data:allY.map(y=>(cY[y]||0)/1e6),borderColor:PAL.comm,backgroundColor:chartType==='bar'?PAL.comm+'CC':PAL.comm+'22',fill:chartType==='line',tension:0.3,pointRadius:chartType==='line'?3:0,borderWidth:2,borderRadius:chartType==='bar'?4:0}});}}if(S.source!=='commercial'){{C.time.data.datasets.push({{label:'Non-Commercial',data:allY.map(y=>(nY[y]||0)/1e6),borderColor:PAL.noncomm,backgroundColor:chartType==='bar'?PAL.noncomm+'CC':PAL.noncomm+'22',fill:chartType==='line',tension:0.3,pointRadius:chartType==='line'?3:0,borderWidth:2,borderRadius:chartType==='bar'?4:0}});}}C.time.update();const sp=sumByField(f,'species_group');C.species.data.labels=sp.map(s=>s[0]);C.species.data.datasets[0].data=sp.map(s=>s[1]/1e6);C.species.data.datasets[0].backgroundColor=PAL.species.slice(0,sp.length);C.species.update();const ec=sumByField(f,'ecosystem_type');C.eco.data.labels=ec.map(s=>s[0]);C.eco.data.datasets[0].data=ec.map(s=>s[1]/1e6);C.eco.update();const co=sumByField(f,'county').filter(s=>s[0]&&s[0]!=='Unknown');C.county.data.labels=co.map(s=>s[0]);C.county.data.datasets[0].data=co.map(s=>s[1]/1e6);C.county.data.datasets[0].backgroundColor=PAL.county.slice(0,co.length);C.county.update();const isl=sumByField(noncomm,'island').filter(s=>s[0]&&s[0]!=='Unknown'&&s[0]!=='');C.island.data.labels=isl.map(s=>s[0]);C.island.data.datasets[0].data=isl.map(s=>s[1]/1e6);C.island.data.datasets[0].backgroundColor=PAL.island.slice(0,isl.length);C.island.update();const spOT=sumByYearAndField(f,'species_group');const sYears=[...new Set(f.map(d=>d.year))].sort();const spNames=Object.keys(spOT);C.stacked.data.labels=sYears;C.stacked.data.datasets=spNames.map((sp,i)=>({{label:sp,data:sYears.map(y=>(spOT[sp][y]||0)/1e6),backgroundColor:PAL.species[i%PAL.species.length]+'55',borderColor:PAL.species[i%PAL.species.length],fill:true,tension:0.3,pointRadius:0,borderWidth:1.5}}));C.stacked.options.scales.y.stacked=true;C.stacked.update();}}
-function setupListeners(){{document.querySelectorAll('#srcToggle .toggle-btn').forEach(btn=>{{btn.addEventListener('click',()=>{{document.querySelectorAll('#srcToggle .toggle-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');S.source=btn.dataset.v;updateAll();}});}});document.querySelectorAll('#timeType .toggle-btn').forEach(btn=>{{btn.addEventListener('click',()=>{{document.querySelectorAll('#timeType .toggle-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');C.time.destroy();C.time=new Chart(document.getElementById('cTime'),{{type:btn.dataset.v,data:{{labels:[],datasets:[]}},options:{{responsive:true,maintainAspectRatio:false,interaction:{{mode:'index',intersect:false}},plugins:{{tooltip:ttM}},scales:{{y:{{beginAtZero:true,title:{{display:true,text:'Exchange Value (Millions USD)'}},grid:{{color:'rgba(0,0,0,0.04)'}}}},x:{{grid:{{display:false}}}}}}}}}});updateAll();}});}});['fRegion','fSpecies','fEco'].forEach(id=>{{document.getElementById(id).addEventListener('change',e=>{{const key=id==='fRegion'?'region':id==='fSpecies'?'species':'ecosystem';S[key]=e.target.value;updateAll();}});}});const yMin=document.getElementById('yrMin');const yMax=document.getElementById('yrMax');function updateYr(){{let lo=+yMin.value,hi=+yMax.value;if(lo>hi){{[lo,hi]=[hi,lo];yMin.value=lo;yMax.value=hi;}}S.yearMin=lo;S.yearMax=hi;document.getElementById('yrLabel').innerHTML=lo+' &ndash; '+hi;document.getElementById('yrMinL').textContent=lo;document.getElementById('yrMaxL').textContent=hi;updateAll();}}yMin.addEventListener('input',updateYr);yMax.addEventListener('input',updateYr);}}
+function setupListeners(){{document.querySelectorAll('#srcToggle .toggle-btn').forEach(btn=>{{btn.addEventListener('click',()=>{{document.querySelectorAll('#srcToggle .toggle-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');S.source=btn.dataset.v;updateAll();}});}});document.querySelectorAll('#timeType .toggle-btn').forEach(btn=>{{btn.addEventListener('click',()=>{{document.querySelectorAll('#timeType .toggle-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');C.time.destroy();C.time=new Chart(document.getElementById('cTime'),{{type:btn.dataset.v,data:{{labels:[],datasets:[]}},options:{{responsive:true,maintainAspectRatio:false,interaction:{{mode:'index',intersect:false}},plugins:{{tooltip:ttM}},scales:{{y:{{beginAtZero:true,title:{{display:true,text:'Exchange Value (Millions USD)'}},grid:{{color:'rgba(255,255,255,0.08)'}}}},x:{{grid:{{display:false}}}}}}}}}});updateAll();}});}});['fRegion','fSpecies','fEco'].forEach(id=>{{document.getElementById(id).addEventListener('change',e=>{{const key=id==='fRegion'?'region':id==='fSpecies'?'species':'ecosystem';S[key]=e.target.value;updateAll();}});}});const yMin=document.getElementById('yrMin');const yMax=document.getElementById('yrMax');function updateYr(){{let lo=+yMin.value,hi=+yMax.value;if(lo>hi){{[lo,hi]=[hi,lo];yMin.value=lo;yMax.value=hi;}}S.yearMin=lo;S.yearMax=hi;document.getElementById('yrLabel').innerHTML=lo+' &ndash; '+hi;document.getElementById('yrMinL').textContent=lo;document.getElementById('yrMaxL').textContent=hi;updateAll();}}yMin.addEventListener('input',updateYr);yMax.addEventListener('input',updateYr);}}
 document.addEventListener('DOMContentLoaded',()=>{{populateFilters();initCharts();setupListeners();updateAll();}});
 </script>
 </body>
@@ -465,5 +470,5 @@ if __name__ == '__main__':
     if not result:
         print("ERROR: No data found. Run the cleaning pipeline first.")
         print("  Expected files in data/cleaned/:")
-        print("    cleaned_commercial_*.csv")
-        print("    cleaned_noncommercial_*.csv")
+        print("  cleaned_commercial_*.csv")
+        print("  cleaned_noncommercial_*.csv")

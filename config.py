@@ -14,7 +14,6 @@
 
 from pathlib import Path
 
-
 class Config:
 
     BASE_DIR = Path(__file__).parent
@@ -26,13 +25,9 @@ class Config:
     COMMERCIAL_FILE_PATTERN = '*tidied_comm_ev*.csv'
     NONCOMMERCIAL_FILE_PATTERN = '*tidied_noncomm_ev*.csv'
 
-    VALID_COUNTIES = [
-        'Hawaii', 'Maui', 'Honolulu', 'Kauai', 'Kalawao'
-    ]
+    VALID_COUNTIES = [ 'Hawaii', 'Maui', 'Honolulu', 'Kauai', 'Kalawao' ]
 
-    VALID_ISLANDS = [
-        'Hawaii', 'Kauai', 'Lanai', 'Maui', 'Molokai', 'Oahu'
-    ]
+    VALID_ISLANDS = [ 'Hawaii', 'Kauai', 'Lanai', 'Maui', 'Molokai', 'Oahu' ]
 
     COMMERCIAL_MIN_YEAR = 1997
     COMMERCIAL_MAX_YEAR = 2021
@@ -40,38 +35,25 @@ class Config:
     NONCOMMERCIAL_MIN_YEAR = 2005
     NONCOMMERCIAL_MAX_YEAR = 2022
 
-    COMMERCIAL_SPECIES_GROUPS = [
-        'Deep 7 Bottomfish', 'Shallow Bottomfish',
-        'Pelagics', 'Reef-Associated', 'All Species'
-    ]
+    COMMERCIAL_SPECIES_GROUPS = [ 'Deep 7 Bottomfish', 'Shallow Bottomfish', 'Pelagics', 'Reef-Associated', 'All Species' ]
 
     NONCOMMERCIAL_SPECIES_GROUPS = ['Herbivores']
 
-    ECOSYSTEM_TYPES = [
-        'Inshore — Reef', 'Coastal — Open Ocean', 'All Ecosystems'
-    ]
+    ECOSYSTEM_TYPES = [ 'Inshore — Reef', 'Coastal — Open Ocean', 'All Ecosystems' ]
 
     AGGREGATE_SPECIES_VALUES = ['All Species']
     AGGREGATE_ECOSYSTEM_VALUES = ['All Ecosystems']
 
-    DISPLAY_ONLY_COLUMNS = [
-        'county_olelo', 'island_olelo', 'exchange_value_formatted'
-    ]
+    DISPLAY_ONLY_COLUMNS = [ 'county_olelo', 'island_olelo', 'exchange_value_formatted' ]
 
     LOG_LEVEL = 'INFO'
     LOG_FORMAT = '%(asctime)s - %(levelname)s - %(message)s'
 
     EXPORT_TIMESTAMP_FORMAT = '%Y%m%d'
 
-    REQUIRED_COMMERCIAL_COLUMNS = [
-        'year', 'area_id', 'county',
-        'species_group', 'ecosystem_type', 'exchange_value'
-    ]
+    REQUIRED_COMMERCIAL_COLUMNS = [ 'year', 'area_id', 'county', 'species_group', 'ecosystem_type', 'exchange_value' ]
 
-    REQUIRED_NONCOMMERCIAL_COLUMNS = [
-        'year', 'island', 'county',
-        'species_group', 'ecosystem_type', 'exchange_value'
-    ]
+    REQUIRED_NONCOMMERCIAL_COLUMNS = [ 'year', 'island', 'county', 'species_group', 'ecosystem_type', 'exchange_value']
 
 
 #*****************************************************************

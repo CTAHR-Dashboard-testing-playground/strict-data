@@ -6,8 +6,8 @@
 #
 #  FILE:        clean_noncommercial.py
 #
-#  DESCRIPTION: Non-commercial fisheries data cleaning module.
-#               Validates and optionally filters non-commercial fisheries tidied data.
+#  DESCRIPTION: Non commercial fisheries data cleaning module.
+#               Validates and optionally filters non commercial fisheries tidied data.
 #               Since input is pre-tidied, focuses on validation and optional transformations.
 #
 #*****************************************************************
@@ -17,7 +17,6 @@ import numpy as np
 import logging
 from pathlib import Path
 from datetime import datetime
-
 
 class NonCommercialDataCleaner:
 
@@ -31,9 +30,9 @@ class NonCommercialDataCleaner:
 #                 auditing cleaning impacts.
 #
 #  Parameters:    input_dir (str) : path to directory containing the pre-tidied
-#                     non-commercial CSV file (default: 'data/raw')
+#                     non commercial CSV file 
 #                 output_dir (str) : path to directory where the cleaned CSV
-#                     will be saved (default: 'data/cleaned')
+#                     will be saved 
 #
 #  Return values: None (constructor)
 #
@@ -52,7 +51,7 @@ class NonCommercialDataCleaner:
 #
 #  Function name: loadData
 #
-#  DESCRIPTION:   Locates a non-commercial fisheries CSV in the input directory
+#  DESCRIPTION:   Locates a non commercial fisheries CSV in the input directory
 #                 using expected filename patterns with a broader fallback.
 #                 Loads the first match into a DataFrame and records the raw row
 #                 count for later comparison.
@@ -65,7 +64,7 @@ class NonCommercialDataCleaner:
 #*****************************************************************
 
     def loadData(self):
-        logging.info('Loading non-commercial fisheries data...')
+        logging.info('Loading non commercial fisheries data ')
 
         try:
             noncomm_files = list(self.input_dir.glob('*tidied_noncomm_ev*.csv'))
@@ -74,7 +73,7 @@ class NonCommercialDataCleaner:
                 noncomm_files = list(self.input_dir.glob('*noncomm_ev*.csv'))
 
             if not noncomm_files:
-                logging.error(f'No non-commercial data file found in {self.input_dir}')
+                logging.error(f'No non commercial data file found in {self.input_dir}')
                 return False
 
             self.data = pd.read_csv(noncomm_files[0])
@@ -84,7 +83,7 @@ class NonCommercialDataCleaner:
             return True
 
         except Exception as e:
-            logging.error(f'Error loading non-commercial data: {e}')
+            logging.error(f'Error loading non commercial data: {e}')
             return False
 
 
@@ -104,16 +103,11 @@ class NonCommercialDataCleaner:
 #*****************************************************************
 
     def validateSchema(self):
-        logging.info('Validating data schema...')
+        logging.info('Validating data schema ')
 
-        required_columns = [
-            'year', 'island', 'county',
-            'species_group', 'ecosystem_type', 'exchange_value'
-        ]
+        required_columns = [ 'year', 'island', 'county', 'species_group', 'ecosystem_type', 'exchange_value']
 
-        optional_columns = [
-            'island_olelo', 'county_olelo', 'exchange_value_formatted'
-        ]
+        optional_columns = ['island_olelo', 'county_olelo', 'exchange_value_formatted']
 
         missing_required = [col for col in required_columns if col not in self.data.columns]
 
@@ -139,12 +133,12 @@ class NonCommercialDataCleaner:
 #
 #  Parameters:    None
 #
-#  Return values: None (modifies self.data in place)
+#  Return values: None 
 #
 #*****************************************************************
 
     def validateDataTypes(self):
-        logging.info('Validating data types...')
+        logging.info('Validating data types ')
 
         self.data['year'] = pd.to_numeric(self.data['year'], errors='coerce').astype('Int64')
         self.data['exchange_value'] = pd.to_numeric(self.data['exchange_value'], errors='coerce')
@@ -153,6 +147,7 @@ class NonCommercialDataCleaner:
         null_values = self.data['exchange_value'].isnull().sum()
 
         if null_years > 0:
+
             logging.warning(f'Found {null_years} null years after conversion')
         if null_values > 0:
             logging.warning(f'Found {null_values} null exchange values after conversion')
@@ -163,7 +158,7 @@ class NonCommercialDataCleaner:
 #  Function name: validateDataRanges
 #
 #  DESCRIPTION:   Checks for negative exchange values and years outside the expected
-#                 2005-2022 non-commercial range. Logs warnings for out-of-range values
+#                 2005-2022 non commercial range. Logs warnings for out of range values
 #                 but does not remove them to avoid silent data loss.
 #
 #  Parameters:    None
@@ -173,7 +168,7 @@ class NonCommercialDataCleaner:
 #*****************************************************************
 
     def validateDataRanges(self):
-        logging.info('Validating data ranges...')
+        logging.info('Validating data ranges ')
 
         issues = []
 
@@ -211,11 +206,9 @@ class NonCommercialDataCleaner:
 #*****************************************************************
 
     def validateEcosystemTypes(self):
-        logging.info('Validating ecosystem types...')
+        logging.info('Validating ecosystem types ')
 
-        expected_ecosystems = [
-            'Inshore — Reef', 'Coastal — Open Ocean', 'All Ecosystems'
-        ]
+        expected_ecosystems = [ 'Inshore — Reef', 'Coastal — Open Ocean', 'All Ecosystems']
 
         unique_ecosystems = self.data['ecosystem_type'].unique()
         unexpected = [e for e in unique_ecosystems if e not in expected_ecosystems]
@@ -230,7 +223,7 @@ class NonCommercialDataCleaner:
 #
 #  Function name: validateSpeciesGroups
 #
-#  DESCRIPTION:   Validates that non-commercial data only contains the Herbivores
+#  DESCRIPTION:   Validates that non commercial data only contains the Herbivores
 #                 species group unlike commercial which has four groups plus aggregate.
 #                 Logs any unexpected groups to flag upstream data issues.
 #
@@ -241,7 +234,7 @@ class NonCommercialDataCleaner:
 #*****************************************************************
 
     def validateSpeciesGroups(self):
-        logging.info('Validating species groups...')
+        logging.info('Validating species groups ')
 
         expected_species = ['Herbivores']
 
@@ -269,11 +262,9 @@ class NonCommercialDataCleaner:
 #*****************************************************************
 
     def validateIslands(self):
-        logging.info('Validating island names...')
+        logging.info('Validating island names ')
 
-        expected_islands = [
-            'Hawaii', 'Kauai', 'Lanai', 'Maui', 'Molokai', 'Oahu'
-        ]
+        expected_islands = [ 'Hawaii', 'Kauai', 'Lanai', 'Maui', 'Molokai', 'Oahu']
 
         unique_islands = self.data['island'].unique()
         unexpected = [i for i in unique_islands if i not in expected_islands]
@@ -288,7 +279,7 @@ class NonCommercialDataCleaner:
 #
 #  Function name: validateCounties
 #
-#  DESCRIPTION:   Validates county names against the four counties present in non-
+#  DESCRIPTION:   Validates county names against the four counties present in non
 #                 commercial data. Kalawao is absent because Molokai maps to Maui
 #                 county in the MRIP survey design.
 #
@@ -299,7 +290,7 @@ class NonCommercialDataCleaner:
 #*****************************************************************
 
     def validateCounties(self):
-        logging.info('Validating county names...')
+        logging.info('Validating county names ')
 
         expected_counties = ['Hawaii', 'Maui', 'Honolulu', 'Kauai']
 
@@ -322,12 +313,12 @@ class NonCommercialDataCleaner:
 #
 #  Parameters:    None
 #
-#  Return values: None (modifies self.data in place)
+#  Return values: None 
 #
 #*****************************************************************
 
     def removeNullValues(self):
-        logging.info('Removing null/NA exchange values...')
+        logging.info('Removing null/NA exchange values ')
 
         before_count = len(self.data)
         self.data = self.data[self.data['exchange_value'].notna()].copy()
@@ -344,13 +335,13 @@ class NonCommercialDataCleaner:
 #
 #  Function name: removeAggregateRows
 #
-#  DESCRIPTION:   Optionally removes All Ecosystems rollup rows to prevent double-
+#  DESCRIPTION:   Optionally removes All Ecosystems rollup rows to prevent double
 #                 counting during totals and aggregations. No All Species filter is
-#                 needed since non-commercial only contains the Herbivores group.
+#                 needed since noncommercial only contains the Herbivores group.
 #
 #  Parameters:    remove_aggregates (bool) : if True, remove aggregate rows (default: True)
 #
-#  Return values: None (modifies self.data in place)
+#  Return values: None 
 #
 #*****************************************************************
 
@@ -359,7 +350,7 @@ class NonCommercialDataCleaner:
             logging.info('Skipping aggregate row removal (remove_aggregates=False)')
             return
 
-        logging.info('Removing aggregate rows...')
+        logging.info('Removing aggregate rows ')
 
         before_count = len(self.data)
 
@@ -380,22 +371,22 @@ class NonCommercialDataCleaner:
 #
 #  Function name: removeDisplayColumns
 #
-#  DESCRIPTION:   Optionally drops display-only columns including island_olelo,
+#  DESCRIPTION:   Optionally drops display only columns including island_olelo,
 #                 county_olelo, and exchange_value_formatted. This reduces file size
 #                 and prevents accidental use of formatted strings in numeric workflows.
 #
 #  Parameters:    remove_display (bool) : if True, drop display columns (default: False)
 #
-#  Return values: None (modifies self.data in place)
+#  Return values: None 
 #
 #*****************************************************************
 
     def removeDisplayColumns(self, remove_display=False):
         if not remove_display:
-            logging.info('Keeping display columns (remove_display=False)')
+            logging.info('Keeping display columns')
             return
 
-        logging.info('Removing display-only columns...')
+        logging.info('Removing display only columns ')
 
         display_columns = ['island_olelo', 'county_olelo', 'exchange_value_formatted']
         columns_to_drop = [col for col in display_columns if col in self.data.columns]
@@ -413,7 +404,7 @@ class NonCommercialDataCleaner:
 #
 #  DESCRIPTION:   Generates a structured summary of the cleaned dataset for auditing
 #                 and dashboard consumption. Includes row counts, year range, totals,
-#                 unique category values, and per-year/per-island breakdowns.
+#                 unique category values, and per year/per island breakdowns.
 #
 #  Parameters:    None
 #
@@ -422,7 +413,7 @@ class NonCommercialDataCleaner:
 #*****************************************************************
 
     def generateSummaryStatistics(self):
-        logging.info('Generating summary statistics...')
+        logging.info('Generating summary statistics ')
 
         summary = {
             'data_type': 'non_commercial',
@@ -462,7 +453,7 @@ class NonCommercialDataCleaner:
 #*****************************************************************
 
     def exportCleanedData(self):
-        logging.info('Exporting cleaned non-commercial data...')
+        logging.info('Exporting cleaned non commercial data ')
 
         timestamp = datetime.now().strftime('%Y%m%d')
         output_file = self.output_dir / f'cleaned_noncommercial_{timestamp}.csv'
@@ -478,21 +469,20 @@ class NonCommercialDataCleaner:
 #
 #  Function name: runCleaningPipeline
 #
-#  DESCRIPTION:   Runs the full non-commercial cleaning workflow including island
+#  DESCRIPTION:   Runs the full non commercial cleaning workflow including island
 #                 validation and stops early if load or schema validation fails.
 #                 Applies all validators, null removal, optional cleanup, then exports.
 #
 #  Parameters:    remove_aggregates (bool) : remove All Ecosystems rows (default: True)
-#                 remove_display (bool) : remove display-only columns (default: False)
+#                 remove_display (bool) : remove display only columns (default: False)
 #
 #  Return values: tuple (bool, Path, dict) : (success, exported_csv_path, summary_stats)
 #
 #*****************************************************************
 
     def runCleaningPipeline(self, remove_aggregates=True, remove_display=False):
-        logging.info('=' * 60)
-        logging.info('NON-COMMERCIAL FISHERIES DATA CLEANING PIPELINE')
-        logging.info('=' * 60)
+
+        logging.info('NON COMMERCIAL FISHERIES DATA CLEANING PIPELINE')
 
         if not self.loadData():
             return False, None, None
@@ -515,11 +505,9 @@ class NonCommercialDataCleaner:
         output_file = self.exportCleanedData()
         summary = self.generateSummaryStatistics()
 
-        logging.info('=' * 60)
-        logging.info('NON-COMMERCIAL DATA CLEANING COMPLETE')
+        logging.info('NON COMMERCIAL DATA CLEANING COMPLETE')
         logging.info(f'Input:  {self.raw_row_count:,} rows')
         logging.info(f'Output: {self.cleaned_row_count:,} rows')
         logging.info(f'Removed: {self.raw_row_count - self.cleaned_row_count:,} rows')
-        logging.info('=' * 60)
 
         return True, output_file, summary
